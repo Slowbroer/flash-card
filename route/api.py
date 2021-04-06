@@ -3,6 +3,11 @@
 from app.flash_card import FlashCard
 
 
+@FlashCard.route('/')
+def index():
+    return "hello world"
+
+
 @FlashCard.route('/auth/login')
 def login():
     return "login success"

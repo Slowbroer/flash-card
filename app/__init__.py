@@ -8,6 +8,6 @@ from flask_sqlalchemy import SQLAlchemy
 def create_app():
     app = Flask(__name__)
 
-    from .flash_card import WeChat as WeChatBlueprint
-    app.register_blueprint(WeChatBlueprint, url_prefix='/WeChat')
+    from .flash_card import FlashCard as FlashCardBlueprint
+    app.register_blueprint(FlashCardBlueprint, url_prefix='/flash_card')
     return app
