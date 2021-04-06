@@ -3,13 +3,7 @@
 
 from functools import wraps
 from flask import g, request
+from flask_jwt import JWT, jwt_required, current_identity
 
 
-# jwt 登陆中间件
-def login_required(f):
-    @wraps(f)
-    def decorated_function(*args, **kwargs):
-
-        pass
-    return decorated_function
 

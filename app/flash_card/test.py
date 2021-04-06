@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 from app.flash_card import FlashCard
+from flask_jwt import jwt_required
 
 
 @FlashCard.route('/test/', methods=['GET'])

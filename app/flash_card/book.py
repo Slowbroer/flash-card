@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 from app.flash_card import FlashCard
-from app.middleware.auth.jwt import login_required
+from flask_jwt import jwt_required
 
 
 # Book list interface
