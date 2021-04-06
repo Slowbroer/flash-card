@@ -5,6 +5,7 @@ from app.flash_card import FlashCard
 
 @FlashCard.route('/auth/login')
 def login():
+    
     pass
 
 
