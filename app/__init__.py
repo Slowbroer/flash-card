@@ -28,7 +28,7 @@ def authenticate(code, password):
     app.logger.info(content)
     content_obj = json.loads(content)
     print(content_obj)
-    if content_obj['errcode'] == 0:
+    if 'errcode' not in content_obj:
         # union_id = content_obj['unionid']
         open_id = content_obj['openid']
         user = User.query.filter_by(open_id=open_id).first()

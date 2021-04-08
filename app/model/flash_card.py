@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from app import db
-from .user import User
+from .user import Users
 
 
 class FlashCardBooks(db.Model):
