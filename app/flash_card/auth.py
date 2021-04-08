@@ -1,13 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-from app.flash_card import FlashCard
+from app.flash_card import flash_card
 
 
-@FlashCard.route('/auth/login')
-def login():
-    pass
-
-
-@FlashCard.route('/auth/logout')
+@flash_card.route('/auth/logout')
 def logout():
     pass

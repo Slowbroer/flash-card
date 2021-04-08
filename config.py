@@ -8,3 +8,4 @@ class Config(object):
     DEBUG = False
     SQLALCHEMY_DATABASE_URI = ''  # TODO
     SECRET_KEY = ''  # TODO
+    JWT_AUTH_USERNAME_KEY = 'code'
