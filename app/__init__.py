@@ -16,7 +16,7 @@ jwt = JWT()
 
 @jwt.authentication_handler
 def authenticate(code, password):
-    from app.model.user import User
+    from app.model.user import Users
     from manage import app
     app_id = app.config.get('WE_CHAT_APP_ID')
     secret = app.config.get('WE_CHAT_SECRET')
@@ -31,9 +31,9 @@ def authenticate(code, password):
     if 'errcode' not in content_obj:
         # union_id = content_obj['unionid']
         open_id = content_obj['openid']
-        user = User.query.filter_by(open_id=open_id).first()
+        user = Users.query.filter_by(open_id=open_id).first()
         if user is None:
-            user = User(open_id=open_id)
+            user = Users(open_id=open_id)
             db.session.add(user)
             db.session.commit()
         return user
@@ -42,9 +42,9 @@ def authenticate(code, password):
 
 @jwt.identity_handler
 def identity(payload):
-    from app.model.user import User
+    from app.model.user import Users
     user_id = payload['identity']
-    return User.query.filter_by(id=user_id).first()
+    return Users.query.filter_by(id=user_id).first()
 
 
 def create_app():
