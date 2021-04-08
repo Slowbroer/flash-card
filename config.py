@@ -9,3 +9,4 @@ class Config(object):
     SQLALCHEMY_DATABASE_URI = ''  # TODO
     SECRET_KEY = ''  # TODO
     JWT_AUTH_USERNAME_KEY = 'code'
+    # JWT_AUTH_URL_RULE = None
