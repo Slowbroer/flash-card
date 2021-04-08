@@ -29,11 +29,11 @@ def authenticate(code, password):
     content_obj = json.loads(content)
     print(content_obj)
     if content_obj['errcode'] == 0:
-        union_id = content_obj['unionid']
+        # union_id = content_obj['unionid']
         open_id = content_obj['openid']
-        user = User.query.filter_by(union_id=union_id).first()
+        user = User.query.filter_by(open_id=open_id).first()
         if user is None:
-            user = User(union_id=union_id, open_id=open_id)
+            user = User(open_id=open_id)
             db.session.add(user)
             db.session.commit()
         return user

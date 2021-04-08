@@ -2,10 +2,10 @@
 # -*- coding: utf-8 -*-
 from app.flash_card import flash_card
 from flask_json import json_response
-from manage import app
 from app import jwt
 from flask import request
 from flask_jwt import JWTError
+from manage import app
 
 
 @flash_card.route('/auth')
