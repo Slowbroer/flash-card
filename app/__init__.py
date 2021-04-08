@@ -8,7 +8,6 @@ import requests
 import json
 from flask_json import FlaskJSON, JsonError, json_response, as_json
 from config import Config
-from manage import app
 
 
 db = SQLAlchemy()
@@ -18,6 +17,7 @@ jwt = JWT()
 @jwt.authentication_handler
 def authenticate(code, password):
     from app.model.user import User
+    from manage import app
     app_id = app.config.get('WE_CHAT_APP_ID')
     secret = app.config.get('WE_CHAT_SECRET')
 
@@ -25,6 +25,7 @@ def authenticate(code, password):
         f"https://api.weixin.qq.com/sns/jscode2session"
         f"?appid={app_id}&secret={secret}&js_code={code}&grant_type=authorization_code"
     ).content
+    app.logger.info(content)
     content_obj = json.loads(content)
     print(content_obj)
     if content_obj['errcode'] == 0:
