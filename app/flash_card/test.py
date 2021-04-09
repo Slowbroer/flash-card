@@ -1,16 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 from app.flash_card import flash_card
-from flask_jwt import jwt_required
+from flask_json import json_response
 
 
-@flash_card.route('/test/', methods=['GET'])
-@jwt_required()
+@flash_card.route('/test', methods=['GET'])
 def get_card_test():
+    return json_response(data={'token':"123456"})
     pass
 
 
-@flash_card.route('/test/<card_id>', methods=['POST'])
-@jwt_required()
-def test_card(card_id):
-    pass

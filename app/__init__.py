@@ -47,6 +47,11 @@ def identity(payload):
     return Users.query.filter_by(id=user_id).first()
 
 
+@jwt.auth_response_handler
+def auth_response(access_token, identity_instance):
+    return json_response(data={'token': access_token})
+
+
 def create_app():
     app = Flask(__name__)
     app.config.from_object(Config)
