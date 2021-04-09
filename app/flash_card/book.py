@@ -26,14 +26,14 @@ def book_list():
 
 
 # Book info interface
-@flash_card.route("/book/{id}", methods=['GET'])
+@flash_card.route("/book/<id>", methods=['GET'])
 @jwt_required()
 def book_info():
     pass
 
 
 @flash_card.route("/book", methods=['POST'])
-@jwt_required
+@jwt_required()
 def add_book():
     data = request.get_json()
     name = data.get('name')
@@ -44,13 +44,13 @@ def add_book():
     pass
 
 
-@flash_card.route('/book/{id}', methods=['POST'])
-@jwt_required
+@flash_card.route('/book/<id>', methods=['POST'])
+@jwt_required()
 def update_book():
     pass
 
 
 @flash_card.route('/book', methods=['DELETE'])
-@jwt_required
+@jwt_required()
 def delete_book():
     pass

@@ -21,7 +21,7 @@ def flash_card_item():
     pass
 
 
-@flash_card.route('/check/{card_id}')
+@flash_card.route('/check/<card_id>')
 @jwt_required()
 def check_flask_card(card_id):
     data = request.get_json()
