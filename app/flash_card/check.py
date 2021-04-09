@@ -14,8 +14,8 @@ def flash_card_item():
     book_id = data.get("book_id")
     book = FlashCardBooks.query.filter(id=book_id).first()
     if book is None:
-        return json_response(status=404,msg="the book is not found")
-    cards_count = FlashCards.query.filter(book_id=book_id).count()
+        return json_response(status=404, msg="the book is not found")
+    cards_count = FlashCards.query.filter_by(book_id=book_id).count()
     last_id = data.get('last_id', None)
     # get a random card
     pass

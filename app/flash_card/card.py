@@ -2,8 +2,9 @@
 # -*- coding: utf-8 -*-
 from app.flash_card import flash_card
 from flask_jwt import jwt_required, current_identity
-from app.model.flash_card import FlashCards
+from app.model.flash_card import FlashCards, FlashCardBooks
 from flask import request
+from flask_json import json_response
 
 
 @flash_card.route('/card')
@@ -11,32 +12,72 @@ from flask import request
 def card_list():
     data = request.get_json()
     page = data.get('page', 1)
+    book_id = data.get('book_id')
+    user_id = current_identity.id
+    book = FlashCardBooks.query.filter_by(id=book_id, user_id=user_id).first()
+    if book is None:
+        return json_response(status=404, msg="抽记卡本未找到，可能已经被删除了哦")
+
     per_page = 10
     user_id = current_identity.id
     cards = FlashCards.query.\
-        filter(user_id=user_id).\
-        order_by(FlashCards.created_at.desc()).\
+        filter_by(user_id=user_id).\
+        order_by(FlashCards.id.desc()).\
         paginate(page, per_page)
-    print(cards)
-    pass
+
+    items = []
+    for card in cards.items:
+        items.append({
+            'id': card.id,
+            'name': card.front
+        })
+    return json_response(data={
+        'items': items
+    })
 
 
-@flash_card.route('/card/<card_id>', methods=['GET'])
+@flash_card.route('/card/<id>', methods=['GET'])
 @jwt_required
-def card_info(card_id):
-    print(card_id)
-    pass
+def card_info(id):
+    user_id = current_identity.id
+    card = FlashCards.query.filter_by(id=id).first()
+    if card is None:
+        return json_response(status=404, msg="抽记卡未找到，可能已经被删除了哦")
+    book = FlashCardBooks.query.filter_by(id=card.book_id, user_id=user_id).first()
+    if book is None:
+        return json_response(status=405)
+
+    return json_response(data={
+        'id': book.id,
+        'front': book.front,
+        'back': book.back
+    })
 
 
 @flash_card.route('/card', methods=['POST'])
 @jwt_required
 def add_card():
-    pass
+    user_id = current_identity.id
+    data = request.get_json()
+    book_id = data.get('book_id')
+    front = data.get("front")
+    back = data.get("back")
+    book = FlashCardBooks.query.filter_by(id=book_id, user_id=user_id).first()
+    if book is None:
+        return json_response(status=405)
+
+    card = FlashCards(book_id=book.id, front=front, back=back)
+    return json_response()
 
 
 @flash_card.route('/card/<card_id>', methods=['POST'])
 @jwt_required()
 def update_card(card_id):
+    user_id = current_identity.id
+    data = request.get_json()
+    book_id = data.get('book_id')
+    front = data.get("front")
+    back = data.get("back")
     print(card_id)
 
 
