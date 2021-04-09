@@ -8,10 +8,12 @@ import requests
 import json
 from flask_json import FlaskJSON, JsonError, json_response, as_json
 from config import Config
+from flask_redis import FlaskRedis
 
 
 db = SQLAlchemy()
 jwt = JWT()
+redis = FlaskRedis()
 
 
 @jwt.authentication_handler
@@ -58,6 +60,7 @@ def create_app():
     db.init_app(app)
     jwt.init_app(app)
     FlaskJSON(app)
+    redis.init_app(app)
 
     from .flash_card import flash_card as flash_card_blueprint
     app.register_blueprint(flash_card_blueprint, url_prefix='/flash_card')
