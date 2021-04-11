@@ -51,7 +51,8 @@ def identity(payload):
 
 @jwt.auth_response_handler
 def auth_response(access_token, identity_instance):
-    return json_response(data={'token': access_token})
+    print(access_token)
+    return json_response(data={'token': bytes.decode(access_token)})
 
 
 def create_app():
