@@ -4,8 +4,8 @@ from app.flash_card import flash_card
 from flask_jwt import jwt_required, current_identity
 from flask import request
 from flask_json import json_response
-from app.model.flash_card import FlashCardBooks, FlashCards
-from app import redis_client
+from app.model.flash_card import FlashCardBooks, FlashCards, CheckRecords
+from app import redis_client, db
 import json
 
 
@@ -54,4 +54,8 @@ def flash_card_item():
 def check_flask_card(card_id):
     data = request.get_json()
     result = data.get("result")  # known:  unknown:
-    pass
+    user_id = current_identity.id
+    record = CheckRecords(user_id=user_id, card_id=card_id, result=result)
+    db.session.add(record)
+    db.session.commit()
+    return json_response()

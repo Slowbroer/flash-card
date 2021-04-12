@@ -27,5 +27,14 @@ class FlashCards(db.Model):
     updated_at = db.Column(db.DateTime, server_default=db.func.now(), server_onupdate=db.func.now())
 
 
+class CheckRecords(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    card_id = db.Column(db.Integer, db.ForeignKey('flash_cards.id'), nullable=False)
+    result = db.Column(db.String(20))
+    created_at = db.Column(db.DateTime, server_default=db.func.now())
+    updated_at = db.Column(db.DateTime, server_default=db.func.now(), server_onupdate=db.func.now())
+
+
 
 
