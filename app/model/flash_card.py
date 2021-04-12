@@ -17,6 +17,7 @@ class FlashCardBooks(db.Model):
 class FlashCards(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    type = db.Column(db.String(10))
     # user = db.relationship('Users', backref=db.backref('posts', lazy=True))
     book_id = db.Column(db.Integer, db.ForeignKey('flash_card_books.id'), nullable=False)
     book = db.relationship('FlashCardBooks', backref=db.backref('posts', lazy=True))

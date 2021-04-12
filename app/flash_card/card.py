@@ -9,12 +9,13 @@ from app import db
 
 
 @flash_card.route('/card')
-@jwt_required
+@jwt_required()
 def card_list():
     data = request.get_json()
     page = data.get('page', 1)
     book_id = data.get('book_id')
     user_id = current_identity.id
+    print(user_id)
     book = FlashCardBooks.query.filter_by(id=book_id, user_id=user_id).first()
     if book is None:
         return json_response(status=404, msg="抽记卡本未找到，可能已经被删除了哦")
@@ -24,10 +25,11 @@ def card_list():
     cards = FlashCards.query.\
         filter_by(user_id=user_id).\
         order_by(FlashCards.id.desc()).\
-        paginate(page, per_page)
+        all()
+        # paginate(page, per_page)
 
     items = []
-    for card in cards.items:
+    for card in cards:
         items.append({
             'id': card.id,
             'name': card.front
@@ -38,7 +40,7 @@ def card_list():
 
 
 @flash_card.route('/card/<id>', methods=['GET'])
-@jwt_required
+@jwt_required()
 def card_info(id):
     user_id = current_identity.id
     card = FlashCards.query.filter_by(id=id, user_id=user_id).first()
@@ -53,7 +55,7 @@ def card_info(id):
 
 
 @flash_card.route('/card', methods=['POST'])
-@jwt_required
+@jwt_required()
 def add_card():
     user_id = current_identity.id
     data = request.get_json()
@@ -64,8 +66,8 @@ def add_card():
     if book is None:
         return json_response(status=405)
 
-    card = FlashCards(book_id=book.id, user_id=user_id, front=front, back=back)
-    db.session.add(book)
+    card = FlashCards(book_id=book.id, user_id=user_id, front=front, back=back, type="text")
+    db.session.add(card)
     db.session.commit()
     return json_response()
 

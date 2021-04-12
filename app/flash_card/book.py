@@ -23,8 +23,10 @@ def book_list():
     books = FlashCardBooks.query.\
         filter_by(user_id=user_id).\
         order_by(FlashCardBooks.id.desc()).\
-        paginate(page, per_page)
-    for book in books.items:
+        all()
+        # paginate(page, per_page)
+
+    for book in books:
         items.append({
             'id': book.id,
             'name': book.name
