@@ -55,6 +55,11 @@ def auth_response(access_token, identity_instance):
     return json_response(data={'token': bytes.decode(access_token)})
 
 
+@jwt.jwt_error_handler
+def jwt_error(error):
+    return json_response(status=error.status_code)
+
+
 def create_app():
     app = Flask(__name__)
     app.config.from_object(Config)

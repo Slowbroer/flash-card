@@ -9,7 +9,7 @@ from manage import app
 from app.model.user import Users
 
 
-@flash_card.route('/auth')
+@flash_card.route('/auth', methods=["POST"])
 def login():
     data = request.get_json()
     username = data.get(app.config.get('JWT_AUTH_USERNAME_KEY'), None)

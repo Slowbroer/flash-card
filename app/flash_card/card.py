@@ -11,16 +11,14 @@ from app import db
 @flash_card.route('/card')
 @jwt_required()
 def card_list():
-    data = request.get_json()
-    page = data.get('page', 1)
-    book_id = data.get('book_id')
+    book_id = request.args.get('book_id')
     user_id = current_identity.id
     print(user_id)
     book = FlashCardBooks.query.filter_by(id=book_id, user_id=user_id).first()
     if book is None:
         return json_response(status=404, msg="抽记卡本未找到，可能已经被删除了哦")
 
-    per_page = 10
+    # per_page = 10
     user_id = current_identity.id
     cards = FlashCards.query.\
         filter_by(user_id=user_id).\

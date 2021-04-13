@@ -13,9 +13,6 @@ from flask_sqlalchemy import Pagination
 @flash_card.route("/book", methods=['GET'])
 @jwt_required()
 def book_list():
-    data = request.get_json()
-    page = data.get('page', 1)
-    per_page = 10
     user_id = current_identity.id
     # user_id = data.get('user')
 
