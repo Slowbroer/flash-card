@@ -49,7 +49,7 @@ def flash_card_item():
     return json_response(data=card)
 
 
-@flash_card.route('/check/<card_id>')
+@flash_card.route('/check/<card_id>', methods=['POST'])
 @jwt_required()
 def check_flask_card(card_id):
     data = request.get_json()
