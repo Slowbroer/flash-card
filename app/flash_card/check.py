@@ -19,8 +19,9 @@ def check_init():
     if book is None:
         return json_response(status=404, msg="抽记卡本未找到，可能已经被删除了哦")
     cards = FlashCards.query.filter_by(book_id=book_id).all()
-    redis_key = "flask_card:" + str(user_id) + ":check"
+    redis_key = "flash_card:" + str(user_id) + ":check"
     redis_client.ltrim(redis_key, 1, 0)
+    print(cards)
     for card in cards:
         card_data = json.dumps({
             "id": card.id,
@@ -38,10 +39,11 @@ def flash_card_item():
     book_id = data.get("book_id")
     user_id = current_identity.id
     book = FlashCardBooks.query.filter_by(id=book_id, user_id=user_id).first()
+    print(book)
     if book is None:
         return json_response(status=404, msg="抽记卡本未找到，可能已经被删除了哦")
     # get a random card
-    redis_key = "flask_card:" + str(user_id) + ":check"
+    redis_key = "flash_card:" + str(user_id) + ":check"
     card_data = redis_client.lpop(redis_key)
     if card_data is None:
         return json_response(status=404)
