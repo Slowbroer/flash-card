@@ -35,8 +35,7 @@ def check_init():
 @flash_card.route("/check", methods=['GET'])
 @jwt_required()
 def flash_card_item():
-    data = request.get_json()
-    book_id = data.get("book_id")
+    book_id = request.args.get('book_id')
     user_id = current_identity.id
     book = FlashCardBooks.query.filter_by(id=book_id, user_id=user_id).first()
     print(book)
