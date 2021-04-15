@@ -18,5 +18,8 @@ setup(
         'Flask-SQLAlchemy',
         'Flask-WTF',
         'flask-zookeeper',
+        'SQLAlchemy',
+        'PyMySQL',
+
     ],
 )
