@@ -46,7 +46,7 @@ def flash_card_item():
     redis_key = "flash_card:" + str(user_id) + ":check"
     card_data = redis_client.lpop(redis_key)
     if card_data is None:
-        return json_response(status=404)
+        return json_response(data=[])
     card = json.loads(card_data)
     return json_response(data=card)
 
