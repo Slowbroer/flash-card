@@ -1,11 +1,18 @@
-FROM python:3.7-alpine
+FROM python:3.7
 WORKDIR /code
-ENV FLASK_APP=app.py
+# ENV FLASK_APP=manage.py
 ENV FLASK_RUN_HOST=0.0.0.0
-RUN apk update
-RUN apk add --no-cache gcc python3.7-dev libffi-dev openssl-dev libc-dev musl-dev linux-headers
+RUN pip install --upgrade pip
+RUN apt update && apt install -y \ 
+ gcc \
+ make \
+ libffi-dev \
+ libc-dev \
+ musl-dev 
 COPY requirements.txt requirements.txt
 RUN pip install -r requirements.txt
+# COPY setup.py setup.py
+# RUN python install setup.py
 EXPOSE 5000
 COPY . .
 CMD ["flask", "run"]
