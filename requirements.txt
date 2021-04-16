@@ -12,7 +12,6 @@ docker==5.0.0
 docker-compose==1.29.1
 dockerpty==0.4.1
 docopt==0.6.2
--e git+https://github.com/Slowbroer/flash_card.git@d988ed738fa04b661c44b006a075fa92d0b183c6#egg=flash_card
 Flask==1.1.2
 Flask-Cache==0.13.1
 Flask-JSON==0.3.4
