@@ -21,7 +21,7 @@ def card_list():
     # per_page = 10
     user_id = current_identity.id
     cards = FlashCards.query.\
-        filter_by(user_id=user_id).\
+        filter_by(user_id=user_id, book_id=book_id).\
         order_by(FlashCards.id.desc()).\
         all()
         # paginate(page, per_page)
