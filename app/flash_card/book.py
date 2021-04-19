@@ -55,6 +55,9 @@ def add_book():
     data = request.get_json()
     name = data.get('name')
     user_id = current_identity.id
+    book_count = FlashCardBooks.query.filter_by(user_id=user_id).count()
+    if book_count > 10:
+        return json_response(status=405,msg="每个人的抽记本数量最多只能为10个")
     # user_id = data.get('user')
     book = FlashCardBooks(name=name, user_id=user_id)
     db.session.add(book)
