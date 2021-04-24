@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 from app.flash_card import flash_card
 from flask_jwt import jwt_required, current_identity
-from app.model.flash_card import FlashCardBooks
+from app.model.flash_card import FlashCardBooks, FlashCards
 from flask import request
 from app import db
 from flask_json import json_response
@@ -90,5 +90,15 @@ def delete_book(id):
         return json_response(status=404, msg="抽记卡本未找到，可能已经被删除了哦")
     if book.user_id != user_id:
         return json_response(status=405)
-    pass
+    cards = FlashCards.query.filter_by(book_id=id).all()
+    try:
+        for card in cards:
+            db.session.delete(card)
+        db.session.delete(book)
+        db.session.commit()
+        return json_response()
+    except Exception:
+        db.session.rollback()
+        return json_response(status=500)
+
 
