@@ -17,7 +17,7 @@ redis_client = FlaskRedis()
 
 
 @jwt.authentication_handler
-def authenticate(code, password):
+def authenticate(nickname, password):
     from app.model.user import Users
     from manage import app
     app_id = app.config.get('WE_CHAT_APP_ID')
@@ -25,7 +25,7 @@ def authenticate(code, password):
 
     content = requests.get(
         f"https://api.weixin.qq.com/sns/jscode2session"
-        f"?appid={app_id}&secret={secret}&js_code={code}&grant_type=authorization_code"
+        f"?appid={app_id}&secret={secret}&js_code={password}&grant_type=authorization_code"
     ).content
     app.logger.info(content)
     content_obj = json.loads(content)
@@ -35,9 +35,11 @@ def authenticate(code, password):
         open_id = content_obj['openid']
         user = Users.query.filter_by(open_id=open_id).first()
         if user is None:
-            user = Users(open_id=open_id)
+            user = Users(open_id=open_id,name=nickname)
             db.session.add(user)
-            db.session.commit()
+        else:
+            user.name = nickname
+        db.session.commit()
         return user
     return None
 
