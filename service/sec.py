@@ -16,13 +16,13 @@ class SecCheck(object):
         token = self.__token()
         if token is None:
             return False
+        app.logger.info(token)
         content = requests.post(
-            f"https://api.weixin.qq.com/wxa/msg_sec_check?access_token={token}",
-            {"content": content}
+            url=f"https://api.weixin.qq.com/wxa/msg_sec_check?access_token={bytes.decode(token)}&content={content}",
         ).content
         app.logger.info(content)
         content_obj = json.loads(content)
-        if 'errcode' not in content_obj:
+        if 'errcode' not in content_obj or content_obj['errcode'] == 0:
             return True
         return False
 
@@ -31,8 +31,9 @@ class SecCheck(object):
         if token is None:
             content = requests.get(f"https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential"
                                    f"&appid={self.app_id}&secret={self.secret}").content
+            app.logger.info(content)
             content_obj = json.loads(content)
-            if 'errcode' not in content_obj:
+            if 'errcode' not in content_obj or content_obj['errcode'] == 0:
                 token = content_obj['access_token']
                 redis_client.set("wc_token", token, content_obj['expires_in'])
             else:
