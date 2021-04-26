@@ -6,6 +6,7 @@ from app.model.flash_card import FlashCards, FlashCardBooks
 from flask import request
 from flask_json import json_response
 from app import db
+from service.sec import SecCheck
 
 
 @flash_card.route('/card')
@@ -60,6 +61,10 @@ def add_card():
     book_id = data.get('book_id')
     front = data.get("front")
     back = data.get("back")
+    sec = SecCheck()
+    if sec.check(front) is False or sec.check(back):
+        return json_response(status=405, msg="填写的内容涉及敏感内容，请修改后再提交")
+
     book = FlashCardBooks.query.filter_by(id=book_id, user_id=user_id).first()
     if book is None:
         return json_response(status=405)
@@ -81,6 +86,10 @@ def update_card(id):
     book_id = data.get('book_id')
     front = data.get("front")
     back = data.get("back")
+    sec = SecCheck()
+    if sec.check(front) is False or sec.check(back):
+        return json_response(status=405, msg="填写的内容涉及敏感内容，请修改后再提交")
+
     card = FlashCards.query.filter_by(id=id, user_id=user_id).first()
     if card is None:
         return json_response(status=404, msg="抽记卡未找到，可能已经被删除了哦")

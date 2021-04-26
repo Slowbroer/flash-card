@@ -7,6 +7,7 @@ from flask import request
 from app import db
 from flask_json import json_response
 from flask_sqlalchemy import Pagination
+from service.sec import SecCheck
 
 
 # Book list interface
@@ -54,10 +55,13 @@ def book_info(id):
 def add_book():
     data = request.get_json()
     name = data.get('name')
+    sec = SecCheck()
+    if sec.check(name) is False:
+        return json_response(status=405, msg="填写的内容涉及敏感内容，请修改后再提交")
     user_id = current_identity.id
     book_count = FlashCardBooks.query.filter_by(user_id=user_id).count()
     if book_count > 10:
-        return json_response(status=405,msg="每个人的抽记本数量最多只能为10个")
+        return json_response(status=405, msg="每个人的抽记本数量最多只能为10个")
     # user_id = data.get('user')
     book = FlashCardBooks(name=name, user_id=user_id)
     db.session.add(book)
@@ -68,14 +72,19 @@ def add_book():
 @flash_card.route('/book/<id>', methods=['POST'])
 @jwt_required()
 def update_book(id):
+    data = request.get_json()
+    name = data.get('name')
+    sec = SecCheck()
+    if sec.check(name) is False:
+        return json_response(status=405, msg="填写的内容涉及敏感内容，请修改后再提交")
+
     book = FlashCardBooks.query.filter_by(id=id).first()
     user_id = current_identity.id
     if book is None:
         return json_response(status=404, msg="抽记卡本未找到，可能已经被删除了哦")
     if book.user_id != user_id:
         return json_response(status=405)
-    data = request.get_json()
-    name = data.get('name')
+
     book.name = name
     db.session.commit()
     return json_response()

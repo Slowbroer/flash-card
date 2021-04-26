@@ -9,6 +9,7 @@ import json
 from flask_json import FlaskJSON, JsonError, json_response, as_json
 from config import Config
 from flask_redis import FlaskRedis
+from middleware import Middleware
 
 
 db = SQLAlchemy()
@@ -72,4 +73,5 @@ def create_app():
 
     from .flash_card import flash_card as flash_card_blueprint
     app.register_blueprint(flash_card_blueprint, url_prefix='/flash_card')
+    # app.wsgi_app = Middleware(app.wsgi_app)
     return app
