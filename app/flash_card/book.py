@@ -55,6 +55,8 @@ def book_info(id):
 def add_book():
     data = request.get_json()
     name = data.get('name')
+    if len(name) > 100:
+        return json_response(status=405, msg="名字不能超过100个字")
     sec = SecCheck()
     if sec.check(name) is False:
         return json_response(status=405, msg="填写的内容涉及敏感内容，请修改后再提交")
@@ -74,6 +76,8 @@ def add_book():
 def update_book(id):
     data = request.get_json()
     name = data.get('name')
+    if len(name) > 100:
+        return json_response(status=405, msg="名字不能超过100个字")
     sec = SecCheck()
     if sec.check(name) is False:
         return json_response(status=405, msg="填写的内容涉及敏感内容，请修改后再提交")

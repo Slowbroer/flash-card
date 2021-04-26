@@ -61,6 +61,10 @@ def add_card():
     book_id = data.get('book_id')
     front = data.get("front")
     back = data.get("back")
+    if len(front) > 100:
+        return json_response(status=405, msg="前面不能超过100个字")
+    if len(back) > 500:
+        return json_response(status=405, msg="后面不能超过500个字")
     sec = SecCheck()
     if sec.check(front) is False or sec.check(back):
         return json_response(status=405, msg="填写的内容涉及敏感内容，请修改后再提交")
@@ -86,6 +90,10 @@ def update_card(id):
     book_id = data.get('book_id')
     front = data.get("front")
     back = data.get("back")
+    if len(front) > 100:
+        return json_response(status=405, msg="前面不能超过100个字")
+    if len(back) > 500:
+        return json_response(status=405, msg="后面不能超过500个字")
     sec = SecCheck()
     if sec.check(front) is False or sec.check(back):
         return json_response(status=405, msg="填写的内容涉及敏感内容，请修改后再提交")
