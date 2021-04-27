@@ -17,8 +17,9 @@ class SecCheck(object):
         if token is None:
             return False
         app.logger.info(token)
+        token = str(token, encoding="utf-8")
         content = requests.post(
-            url=f"https://api.weixin.qq.com/wxa/msg_sec_check?access_token={bytes.decode(token)}&content={content}",
+            url=f"https://api.weixin.qq.com/wxa/msg_sec_check?access_token={token}&content={content}",
         ).content
         app.logger.info(content)
         content_obj = json.loads(content)
