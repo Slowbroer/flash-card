@@ -19,8 +19,8 @@ class SecCheck(object):
         app.logger.info(token)
         app.logger.info(f"https://api.weixin.qq.com/wxa/msg_sec_check?access_token={token}&content={content}")
         content = requests.post(
-            url=f"https://api.weixin.qq.com/wxa/msg_sec_check?access_token={token}",
-            json={"content": content}
+            url=f"https://api.weixin.qq.com/wxa/msg_sec_check",
+            json={"content": content, "access_token": token}
         ).content
         app.logger.info(content)
         content_obj = json.loads(content)
