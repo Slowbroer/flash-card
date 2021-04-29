@@ -19,7 +19,7 @@ class SecCheck(object):
         content = requests.post(
             url=f"https://api.weixin.qq.com/wxa/msg_sec_check?access_token={token}",
             data=json.dumps({"content": content}, ensure_ascii=False).encode('utf-8')
-        )
+        ).content
         app.logger.info(content)
         content_obj = json.loads(content)
         if 'errcode' not in content_obj or content_obj['errcode'] == 0:
