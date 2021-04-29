@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 
 from app import db
 from .user import Users
@@ -34,6 +33,14 @@ class CheckRecords(db.Model):
     result = db.Column(db.String(20))
     created_at = db.Column(db.DateTime, server_default=db.func.now())
     updated_at = db.Column(db.DateTime, server_default=db.func.now(), server_onupdate=db.func.now())
+
+
+class Cards(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    type = db.Column(db.Integer)
+    front = db.Column(db.Text)
+    back = db.Column(db.Text)
+
 
 
 

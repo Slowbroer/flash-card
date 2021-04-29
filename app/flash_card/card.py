@@ -13,6 +13,9 @@ from service.sec import SecCheck
 @jwt_required()
 def card_list():
     book_id = request.args.get('book_id')
+    page = int(request.args.get('page', 1))  # 获取页码
+    per_page = int(request.args.get('per_page', 10))  # 获取页码
+
     user_id = current_identity.id
     print(user_id)
     book = FlashCardBooks.query.filter_by(id=book_id, user_id=user_id).first()
@@ -24,17 +27,22 @@ def card_list():
     cards = FlashCards.query.\
         filter_by(user_id=user_id, book_id=book_id).\
         order_by(FlashCards.id.desc()).\
-        all()
+        paginate(page, per_page)
+        # all()
         # paginate(page, per_page)
 
     items = []
-    for card in cards:
+    for card in cards.items:
         items.append({
             'id': card.id,
             'name': card.front
         })
     return json_response(data={
-        'items': items
+        'items': items,
+        'page': cards.page,
+        'per_page': cards.per_page,
+        'pages': cards.pages,
+        'total': cards.total
     })
 
 

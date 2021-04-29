@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 
 from app import redis_client
 import requests
@@ -17,11 +16,10 @@ class SecCheck(object):
         if token is None:
             return False
         app.logger.info(token)
-        app.logger.info(f"https://api.weixin.qq.com/wxa/msg_sec_check?access_token={token}&content={content}")
         content = requests.post(
-            url=f"https://api.weixin.qq.com/wxa/msg_sec_check",
-            json={"content": content, "access_token": token}
-        ).content
+            url=f"https://api.weixin.qq.com/wxa/msg_sec_check?access_token={token}",
+            data=json.dumps({"content": content}, ensure_ascii=False).encode('utf-8')
+        )
         app.logger.info(content)
         content_obj = json.loads(content)
         if 'errcode' not in content_obj or content_obj['errcode'] == 0:

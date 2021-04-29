@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
+
 from app.flash_card import flash_card
 from flask_jwt import jwt_required, current_identity
 from flask import request

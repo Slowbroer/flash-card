@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
+
 from app.flash_card import flash_card
 from flask_jwt import jwt_required, current_identity
 from app.model.flash_card import FlashCardBooks, FlashCards
@@ -15,22 +15,29 @@ from service.sec import SecCheck
 @jwt_required()
 def book_list():
     user_id = current_identity.id
+    page = int(request.args.get('page', 1))  # 获取页码
+    per_page = int(request.args.get('per_page', 10))  # 获取页码
     # user_id = data.get('user')
 
     items = []
     books = FlashCardBooks.query.\
         filter_by(user_id=user_id).\
-        order_by(FlashCardBooks.id.desc()).\
-        all()
+        order_by(FlashCardBooks.id.desc()). \
+        paginate(page, per_page)
+        # all()
         # paginate(page, per_page)
 
-    for book in books:
+    for book in books.items:
         items.append({
             'id': book.id,
             'name': book.name
         })
     return json_response(data={
-        'items': items
+        'items': items,
+        'page': books.page,
+        'per_page': books.per_page,
+        'pages': books.pages,
+        'total': books.total
     })
 
 
