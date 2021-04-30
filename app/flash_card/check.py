@@ -81,7 +81,7 @@ def get_next_card(book: FlashCardBooks):
     redis_key = get_redis_key(user_id)
     card_data = redis_client.lpop(redis_key)
     if card_data is None:
-        return {}
+        return None
     card = json.loads(card_data)
     return card
 
