@@ -91,6 +91,14 @@ def check_card(card: FlashCards, result: str):
     if result == "known":
         card.known = ++card.known
         card.known_at = time.time()
+    else:
+        redis_key = get_redis_key(user_id)
+        card_data = json.dumps({
+            "id": card.id,
+            "front": card.front,
+            "back": card.back
+        })
+        redis_client.rpush(redis_key, card_data)
     card.updated_at = time.time()
     record = CheckRecords(user_id=user_id, card_id=card_id, result=result)
     db.session.add(record)
