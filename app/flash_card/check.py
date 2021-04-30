@@ -19,8 +19,48 @@ def check_init():
     book = FlashCardBooks.query.filter_by(id=book_id, user_id=user_id).first()
     if book is None:
         return json_response(status=404, msg="抽记卡本未找到，可能已经被删除了哦")
-    cards = FlashCards.query.filter_by(book_id=book_id).all()
-    redis_key = "flash_card:" + str(user_id) + ":check"
+    init_check(book)
+    card = get_next_card(book)
+    return json_response(data=card)
+
+
+# can abandon
+@flash_card.route("/check", methods=['GET'])
+@jwt_required()
+def flash_card_item():
+    book_id = request.args.get('book_id')
+    user_id = current_identity.id
+    book = FlashCardBooks.query.filter_by(id=book_id, user_id=user_id).first()
+    if book is None:
+        return json_response(status=404, msg="抽记卡本未找到，可能已经被删除了哦")
+    card = get_next_card(book)
+    return json_response(data=card)
+
+
+@flash_card.route('/check/<card_id>', methods=['POST'])
+@jwt_required()
+def check_flask_card(card_id):
+    data = request.get_json()
+    result = data.get("result")  # known:  unknown:
+    user_id = current_identity.id
+
+    card = FlashCards.query.filter_by(id=card_id).first()
+    if card is None:
+        return json_response(status=404, msg="抽记卡未找到，可能已经被删除了哦")
+    check_card(card, result)
+    next_card = get_next_card(user_id)
+
+    return json_response(data=next_card)
+
+
+def init_check(book: FlashCardBooks):
+    book_id = book.id
+    cards = FlashCards.query.filter_by(book_id=book_id).order_by(
+        FlashCards.check_time.asc(),
+        FlashCards.known_time.asc(),
+        FlashCards.known.asc()
+    ).limit(10).all()
+    redis_key = f"flash_card:{str(book_id)}:check"
     redis_client.ltrim(redis_key, 1, 0)
     print(cards)
     for card in cards:
@@ -30,42 +70,32 @@ def check_init():
             "back": card.back
         })
         redis_client.rpush(redis_key, card_data)
-    return json_response()
+    return True
 
 
-@flash_card.route("/check", methods=['GET'])
-@jwt_required()
-def flash_card_item():
-    book_id = request.args.get('book_id')
-    user_id = current_identity.id
-    book = FlashCardBooks.query.filter_by(id=book_id, user_id=user_id).first()
-    print(book)
-    if book is None:
-        return json_response(status=404, msg="抽记卡本未找到，可能已经被删除了哦")
-    # get a random card
-    redis_key = "flash_card:" + str(user_id) + ":check"
+def get_next_card(book: FlashCardBooks):
+    user_id = book.user_id
+    redis_key = get_redis_key(user_id)
     card_data = redis_client.lpop(redis_key)
     if card_data is None:
-        return json_response(data=[])
+        init_check(book)
+        return None
     card = json.loads(card_data)
-    return json_response(data=card)
+    return card
 
 
-@flash_card.route('/check/<card_id>', methods=['POST'])
-@jwt_required()
-def check_flask_card(card_id):
-    data = request.get_json()
-    result = data.get("result")  # known:  unknown:
+def check_card(card: FlashCards, result: str):
+    card_id = card.id
+    user_id = card.user_id
 
-    card = FlashCards.query.filter_by(id=card_id).first()
     if result == "known":
         card.known = ++card.known
         card.known_at = time.time()
     card.updated_at = time.time()
-
-    user_id = current_identity.id
     record = CheckRecords(user_id=user_id, card_id=card_id, result=result)
-
     db.session.add(record)
     db.session.commit()
-    return json_response()
+
+
+def get_redis_key(user_id):
+    return f"flash_card:{str(user_id)}:check"
