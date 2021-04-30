@@ -22,6 +22,8 @@ class FlashCards(db.Model):
     book = db.relationship('FlashCardBooks', backref=db.backref('posts', lazy=True))
     front = db.Column(db.String(255))
     back = db.Column(db.Text)
+    known = db.Column(db.Integer)
+    known_time = db.Column(db.Integer)
     created_at = db.Column(db.DateTime, server_default=db.func.now())
     updated_at = db.Column(db.DateTime, server_default=db.func.now(), server_onupdate=db.func.now())
 

@@ -7,6 +7,7 @@ from flask_json import json_response
 from app.model.flash_card import FlashCardBooks, FlashCards, CheckRecords
 from app import redis_client, db
 import json
+import time
 
 
 @flash_card.route("/check/init", methods=['POST'])
@@ -55,8 +56,16 @@ def flash_card_item():
 def check_flask_card(card_id):
     data = request.get_json()
     result = data.get("result")  # known:  unknown:
+
+    card = FlashCards.query.filter_by(id=card_id).first()
+    if result == "known":
+        card.known = ++card.known
+        card.known_at = time.time()
+    card.updated_at = time.time()
+
     user_id = current_identity.id
     record = CheckRecords(user_id=user_id, card_id=card_id, result=result)
+
     db.session.add(record)
     db.session.commit()
     return json_response()
