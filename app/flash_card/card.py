@@ -81,7 +81,7 @@ def add_card():
     if book is None:
         return json_response(status=405)
     card_count = FlashCards.query.filter_by(book_id=book_id).count()
-    if card_count > 100:
+    if card_count > 500:
         return json_response(status=405, msg="每个抽记本的抽记卡数量最多只能为500个")
 
     card = FlashCards(book_id=book.id, user_id=user_id, front=front, back=back, type="text")
