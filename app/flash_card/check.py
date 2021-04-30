@@ -81,7 +81,7 @@ def get_next_card(book: FlashCardBooks):
     redis_key = get_redis_key(user_id)
     card_data = redis_client.lpop(redis_key)
     if card_data is None:
-        return None
+        return {}
     card = json.loads(card_data)
     return card
 
@@ -91,8 +91,9 @@ def check_card(card: FlashCards, result: str):
     user_id = card.user_id
 
     if result == "known":
-        card.known = ++card.known
-        card.known_at = int(time.time())
+        old_known = card.known
+        card.known = old_known + 1
+        card.known_time = int(time.time())
     else:
         redis_key = get_redis_key(user_id)
         card_data = json.dumps({
