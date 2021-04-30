@@ -48,9 +48,8 @@ def check_flask_card(card_id):
     if card is None:
         return json_response(status=404, msg="抽记卡未找到，可能已经被删除了哦")
     check_card(card, result)
-    next_card = get_next_card(user_id)
-
-    return json_response(data=next_card)
+    # next_card = get_next_card(user_id)
+    return json_response()
 
 
 def init_check(book: FlashCardBooks):
