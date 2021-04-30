@@ -20,8 +20,8 @@ def check_init():
     if book is None:
         return json_response(status=404, msg="抽记卡本未找到，可能已经被删除了哦")
     init_check(book)
-    card = get_next_card(book)
-    return json_response(data=card)
+    # card = get_next_card(book)
+    return json_response()
 
 
 # can abandon
@@ -55,6 +55,7 @@ def check_flask_card(card_id):
 
 def init_check(book: FlashCardBooks):
     book_id = book.id
+    user_id = book.user_id
     cards = FlashCards.query.filter_by(book_id=book_id).order_by(
         FlashCards.check_time.asc(),
         FlashCards.known_time.asc(),
@@ -63,7 +64,7 @@ def init_check(book: FlashCardBooks):
     if cards is None:
         return False
 
-    redis_key = f"flash_card:{str(book_id)}:check"
+    redis_key = get_redis_key(user_id)
     redis_client.ltrim(redis_key, 1, 0)
     print(cards)
     for card in cards:
