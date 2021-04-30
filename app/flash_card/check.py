@@ -59,7 +59,10 @@ def init_check(book: FlashCardBooks):
         FlashCards.check_time.asc(),
         FlashCards.known_time.asc(),
         FlashCards.known.asc()
-    ).limit(10).all()
+    ).limit(20).all()
+    if cards is None:
+        return False
+
     redis_key = f"flash_card:{str(book_id)}:check"
     redis_client.ltrim(redis_key, 1, 0)
     print(cards)
@@ -78,7 +81,6 @@ def get_next_card(book: FlashCardBooks):
     redis_key = get_redis_key(user_id)
     card_data = redis_client.lpop(redis_key)
     if card_data is None:
-        init_check(book)
         return None
     card = json.loads(card_data)
     return card
