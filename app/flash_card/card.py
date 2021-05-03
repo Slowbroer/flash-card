@@ -74,7 +74,7 @@ def add_card():
     if len(back) > 500:
         return json_response(status=405, msg="后面不能超过500个字")
     sec = SecCheck()
-    if sec.check(front) is False or sec.check(back):
+    if sec.check(front) is False or sec.check(back) is False:
         return json_response(status=405, msg="填写的内容涉及敏感内容，请修改后再提交")
 
     book = FlashCardBooks.query.filter_by(id=book_id, user_id=user_id).first()
@@ -84,7 +84,16 @@ def add_card():
     if card_count > 500:
         return json_response(status=405, msg="每个抽记本的抽记卡数量最多只能为500个")
 
-    card = FlashCards(book_id=book.id, user_id=user_id, front=front, back=back, type="text")
+    card = FlashCards(
+        book_id=book.id,
+        user_id=user_id,
+        front=front,
+        back=back,
+        type="text",
+        known=0,
+        known_time=0,
+        check_time=0
+    )
     db.session.add(card)
     db.session.commit()
     return json_response()
@@ -103,7 +112,7 @@ def update_card(id):
     if len(back) > 500:
         return json_response(status=405, msg="后面不能超过500个字")
     sec = SecCheck()
-    if sec.check(front) is False or sec.check(back):
+    if sec.check(front) is False or sec.check(back) is False:
         return json_response(status=405, msg="填写的内容涉及敏感内容，请修改后再提交")
 
     card = FlashCards.query.filter_by(id=id, user_id=user_id).first()
