@@ -48,7 +48,12 @@ def check_flask_card(card_id):
     if card is None:
         return json_response(status=404, msg="抽记卡未找到，可能已经被删除了哦")
     check_card(card, result)
-    next_card = get_next_card(user_id)
+
+    book = FlashCardBooks.query.filter_by(id=card.book_id, user_id=user_id).first()
+    if book is None:
+        return json_response(status=404, msg="抽记卡本未找到，可能已经被删除了哦")
+
+    next_card = get_next_card(book)
     return json_response(data=next_card)
 
 
