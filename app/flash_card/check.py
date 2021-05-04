@@ -60,6 +60,11 @@ def check_flask_card(card_id):
 def init_check(book: FlashCardBooks):
     book_id = book.id
     user_id = book.user_id
+
+    redis_key = get_redis_key(user_id)
+    if redis_client.llen(redis_key) > 0:
+        return True
+
     cards = FlashCards.query.filter_by(book_id=book_id).order_by(
         FlashCards.check_time.asc(),
         FlashCards.known_time.asc(),
@@ -68,8 +73,7 @@ def init_check(book: FlashCardBooks):
     if cards is None:
         return False
 
-    redis_key = get_redis_key(user_id)
-    redis_client.ltrim(redis_key, 1, 0)
+    # redis_client.ltrim(redis_key, 1, 0)
     print(cards)
     for card in cards:
         card_data = json.dumps({
