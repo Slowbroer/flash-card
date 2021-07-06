@@ -61,7 +61,7 @@ def init_check(book: FlashCardBooks):
     book_id = book.id
     user_id = book.user_id
 
-    redis_key = get_redis_key(user_id)
+    redis_key = get_redis_key(user_id,book_id)
     if redis_client.llen(redis_key) > 0:
         return True
 
@@ -86,8 +86,9 @@ def init_check(book: FlashCardBooks):
 
 
 def get_next_card(book: FlashCardBooks):
+    book_id = book.id
     user_id = book.user_id
-    redis_key = get_redis_key(user_id)
+    redis_key = get_redis_key(user_id,book_id)
     card_data = redis_client.lpop(redis_key)
     if card_data is None:
         return None
@@ -97,6 +98,7 @@ def get_next_card(book: FlashCardBooks):
 
 def check_card(card: FlashCards, result: str):
     card_id = card.id
+    book_id = card.book_id
     user_id = card.user_id
 
     if result == "known":
@@ -104,7 +106,7 @@ def check_card(card: FlashCards, result: str):
         card.known = old_known + 1
         card.known_time = int(time.time())
     else:
-        redis_key = get_redis_key(user_id)
+        redis_key = get_redis_key(user_id,book_id)
         card_data = json.dumps({
             "id": card.id,
             "front": card.front,
@@ -117,5 +119,5 @@ def check_card(card: FlashCards, result: str):
     db.session.commit()
 
 
-def get_redis_key(user_id):
-    return f"flash_card:{str(user_id)}:check"
+def get_redis_key(user_id,book_id):
+    return f"flash_card:{str(user_id)}:{str(book_id)}check"
